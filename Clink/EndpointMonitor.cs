@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clink.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -33,7 +34,7 @@ namespace Clink
 
 
         public EndpointMonitor( string endpointUrl, double intervalInMilliseconds )
-            : this( endpointUrl, intervalInMilliseconds, new HttpService(), new ConsoleLogger() )
+            : this( endpointUrl, intervalInMilliseconds, new HttpService(), Log.GetLogger( typeof( EndpointMonitor ) ) )
         { }
 
         internal EndpointMonitor( string endpointUrl, double intervalInMilliseconds, IHttpService http, ILogger log )
@@ -58,7 +59,9 @@ namespace Clink
 
         private void Timer_Elapsed( object sender, ElapsedEventArgs e )
         {
+            logger.Debug( "Checking endpoint {0}", url );
             var response = httpService.Request( url );
+            logger.Debug( "Status code: {0}", response.StatusCode );
             if ( EndpointChecked != null )
             {
                 EndpointChecked( new EndpointCheckedEventArgs()

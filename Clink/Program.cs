@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clink.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,7 @@ namespace Clink
     class Program
     {
         static IEndpointRepository endpointRepo = new InMemoryEndpointRepository();
+        static readonly ILogger log = Log.GetLogger( typeof( Program ) );
 
         static void Main( string[] args )
         {
@@ -38,7 +40,7 @@ namespace Clink
 
             if ( StatusShouldBeReported( endpoint.LastStatus, newStatus ) )
             {
-                Console.WriteLine( "Status changed. Will report." );
+                log.Warn( "Status changed. Will report." );
             }
 
             endpoint.Statuses.Add( newStatus );
