@@ -1,4 +1,5 @@
 ﻿using Clink.Logging;
+using Clink.Reporters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Clink
     class Program
     {
         static IEndpointRepository endpointRepo = new InMemoryEndpointRepository();
+        static IReporterRepository reporterRepo = new InMemoryReporterRepository();
         static readonly ILogger log = Log.GetLogger( typeof( Program ) );
 
         static void Main( string[] args )
@@ -33,18 +35,26 @@ namespace Clink
         {
             var newStatus = new EndpointStatus()
             {
-                CheckTime = args.Timestamp,
+                Timestamp = args.Timestamp,
                 StatusCode = args.StatusCode
             };
             var endpoint = endpointRepo.Get( args.Url );
 
             if ( StatusShouldBeReported( endpoint.LastStatus, newStatus ) )
             {
-                log.Warn( "Status changed. Will report." );
+                ReportStatus( endpoint, newStatus );
             }
 
             endpoint.Statuses.Add( newStatus );
             endpointRepo.SaveChanges();
+        }
+
+        private static void ReportStatus( Endpoint endpoint, EndpointStatus newStatus )
+        {
+            foreach ( var reporter in reporterRepo.GetConfiguredReporters() )
+            {
+                reporter.Report( endpoint, newStatus );
+            }
         }
 
         private static bool StatusShouldBeReported( EndpointStatus lastStatus, EndpointStatus newStatus )
@@ -52,25 +62,19 @@ namespace Clink
             if ( lastStatus != null )
             {
                 // If the new status is different from the last status then it should be reported.
-                if ( IsSuccessStatusCode( lastStatus.StatusCode ) != IsSuccessStatusCode( newStatus.StatusCode ) )
+                if ( lastStatus.Status != newStatus.Status )
                 {
                     return true;
                 }
             }
             else // If the endpoint has never been checked before but is down then it should be reported.
             {
-                if ( !IsSuccessStatusCode( newStatus.StatusCode ) )
+                if ( newStatus.Status == Status.Down )
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        private static bool IsSuccessStatusCode( HttpStatusCode statusCode )
-        {
-            int numericStatusCode = (int)statusCode;
-            return numericStatusCode < 300 && numericStatusCode >= 200;
         }
     }
 }

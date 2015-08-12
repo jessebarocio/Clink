@@ -27,7 +27,7 @@ namespace Clink
         {
             get
             {
-                return Statuses.OrderByDescending( s => s.CheckTime ).FirstOrDefault();
+                return Statuses.OrderByDescending( s => s.Timestamp ).FirstOrDefault();
             }
         }
     }
