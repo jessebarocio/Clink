@@ -49,8 +49,9 @@
   <ItemGroup>
     <Compile Include="Endpoint.cs" />
     <Compile Include="EndpointMonitor.cs" />
-    <Compile Include="EndpointRepository.cs" />
-    <Compile Include="EndpointStatusCheck.cs" />
+    <Compile Include="InMemoryEndpointRepository.cs" />
+    <Compile Include="IEndpointRepository.cs" />
+    <Compile Include="EndpointStatus.cs" />
     <Compile Include="HttpService.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />

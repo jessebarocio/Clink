@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -9,16 +10,21 @@ namespace Clink
 {
     class EndpointCheckedEventArgs
     {
-        public Endpoint Endpoint { get; set; }
-        public EndpointStatusCheck Status { get; set; }
+        public string Url
+        { get; set; }
+        public DateTime Timestamp
+        { get; set; }
+        public HttpStatusCode StatusCode
+        { get; set; }
     }
-    
+
     delegate void EndpointCheckedHandler( EndpointCheckedEventArgs args );
 
     class EndpointMonitor : IDisposable
     {
         private Timer timer;
-        private readonly Endpoint endpoint;
+        private readonly double interval;
+        private readonly string url;
         private readonly IHttpService httpService;
         private readonly ILogger logger;
 
@@ -26,44 +32,40 @@ namespace Clink
         public event EndpointCheckedHandler EndpointChecked;
 
 
-        public EndpointMonitor( Endpoint e )
-            : this( e, new HttpService(), new ConsoleLogger() ) { }
-            
-        internal EndpointMonitor( Endpoint e, IHttpService http, ILogger log )
+        public EndpointMonitor( string endpointUrl, double intervalInMilliseconds )
+            : this( endpointUrl, intervalInMilliseconds, new HttpService(), new ConsoleLogger() )
+        { }
+
+        internal EndpointMonitor( string endpointUrl, double intervalInMilliseconds, IHttpService http, ILogger log )
         {
-            endpoint = e;
+            url = endpointUrl;
+            interval = intervalInMilliseconds;
             httpService = http;
             logger = log;
-            timer = new Timer( endpoint.Interval )
+            timer = new Timer( interval )
             {
                 AutoReset = false // The timer will only fire once and must be restarted.
             };
             timer.Elapsed += Timer_Elapsed;
         }
-        
+
 
         public void Start()
         {
             timer.Start();
-            logger.Info( "Begin monitoring endpoint {0}", endpoint.Url );
+            logger.Info( "Begin monitoring endpoint {0}", url );
         }
 
         private void Timer_Elapsed( object sender, ElapsedEventArgs e )
         {
-            logger.Info( "Checking endpoint {0}...", endpoint.Url );
-            var response = httpService.Request( endpoint.Url );
-            logger.Debug( "Response Code: {0}", response.StatusCode );
-            var status = new EndpointStatusCheck()
-            {
-                CheckTime = DateTime.Now,
-                StatusCode = response.StatusCode
-            };
-            if(EndpointChecked != null)
+            var response = httpService.Request( url );
+            if ( EndpointChecked != null )
             {
                 EndpointChecked( new EndpointCheckedEventArgs()
                 {
-                    Endpoint = endpoint,
-                    Status = status
+                    Url = url,
+                    Timestamp = DateTime.Now,
+                    StatusCode = response.StatusCode
                 } );
             }
             timer.Start();
