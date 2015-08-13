@@ -17,7 +17,7 @@ namespace Clink
         { get; set; }
         public string Url
         { get; set; }
-        public double Interval
+        public double CheckInterval
         { get; set; }
 
         public virtual ICollection<EndpointStatus> Statuses

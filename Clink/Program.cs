@@ -11,7 +11,7 @@ namespace Clink
 {
     class Program
     {
-        static IEndpointRepository endpointRepo = new InMemoryEndpointRepository();
+        static IEndpointRepository endpointRepo = new EndpointRepository();
         static IReporterRepository reporterRepo = new ReporterRepository();
         static readonly ILogger log = Log.GetLogger( typeof( Program ) );
 
@@ -21,7 +21,7 @@ namespace Clink
 
             foreach ( var endpoint in endpointRepo.GetAll() )
             {
-                var monitor = new EndpointMonitor( endpoint.Url, endpoint.Interval );
+                var monitor = new EndpointMonitor( endpoint.Url, endpoint.CheckInterval );
                 monitor.EndpointChecked += Monitor_EndpointChecked;
                 monitor.Start();
                 monitors.Add( monitor );
