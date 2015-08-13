@@ -31,7 +31,7 @@ namespace Clink.Logging
 
         public Log4NetLogger( string loggerName )
         {
-            log = log4net.LogManager.GetLogger( loggerName );
+            log = LogManager.GetLogger( loggerName );
         }
 
         public void Debug( string format, params object[] args )

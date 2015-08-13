@@ -7,12 +7,6 @@
   },
   {
     "$type": "Clink.Endpoint, Clink",
-    "Description": "BMI Website",
-    "Url": "http://bmisw.com",
-    "CheckInterval": 15000
-  },
-  {
-    "$type": "Clink.Endpoint, Clink",
     "Description": "White House Website",
     "Url": "http://whitehouse.gov",
     "CheckInterval": 20000
