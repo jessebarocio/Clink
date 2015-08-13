@@ -1,0 +1,7 @@
+﻿The endpoint ##Description## (##Url##) is ##Status## as of ##Timestamp##.
+
+You will be alerted when the status changes again.
+
+Sincerely,
+
+Clink
