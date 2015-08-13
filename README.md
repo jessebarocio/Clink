@@ -1,9 +1,9 @@
 # Clink
 
-Clink is a simple utility that monitors and reports the up/down status of HTTP 
-endpoints. Multiple endpoints can be configured and can be checked at 
-different intervals. If an endpoint's status changes then Clink can report it 
-via email (or whatever other reporters you configure).
+Clink is a simple utility that monitors HTTP endpoints and reports if their 
+up/down status changes. Multiple endpoints can be configured and can be 
+checked at different intervals. If an endpoint's status changes then Clink can 
+report it via email (or whatever other reporters you configure).
 
 ## Configuration
 
