@@ -12,7 +12,7 @@ namespace Clink
     class Program
     {
         static IEndpointRepository endpointRepo = new InMemoryEndpointRepository();
-        static IReporterRepository reporterRepo = new InMemoryReporterRepository();
+        static IReporterRepository reporterRepo = new ReporterRepository();
         static readonly ILogger log = Log.GetLogger( typeof( Program ) );
 
         static void Main( string[] args )
